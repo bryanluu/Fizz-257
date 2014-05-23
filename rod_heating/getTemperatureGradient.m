@@ -40,25 +40,28 @@ ylabel('Temperature (Celsius)');
 %% Function Definitions
     function setParameters()
         % ===== Setting parameters and stuff
-        % K of Copper is approx. 300
-        parameters.kappa = 300;
+        % K of Aluminum is 200
+        parameters.kappa = 200;
         
-        % For copper, at 25 Celsius, 385 J/kgC
-        parameters.specificHeatCapacity = 385;
+        % For Aluminum, at 25 Celsius, 900 J/kgC
+        parameters.specificHeatCapacity = 900;
         
-        % For copper, at 9000 kg/m^3
-        parameters.density = 9000;
+        % For Aluminum, at 2700 kg/m^3
+        parameters.density = 2700;
         
         % Cross-sectional area of circle radius 0.01m
         parameters.crossArea = 0.005^2 * pi;
         
-        parameters.rodLength = 1;
+        % 1 foot
+        parameters.rodLength = 0.3048;
         
-        parameters.segments = 40;
+        parameters.segments = 50;
         
+        parameters.initialTemperature = 20;
         
         timePoints = time/dt;
-        temperature = zeros(timePoints, parameters.segments);
+        
+        temperature = ones(timePoints, parameters.segments) * parameters.initialTemperature;
     end
 
     function calculateTemperatureGradient()
