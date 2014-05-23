@@ -29,7 +29,7 @@ newRodState = lastRodState;
 %% Leftmost Segment
     
 % 100W coming in from left, 100J/s * dt = Joules gained in that time
-heatFromLeft = 5*dt;
+heatFromLeft = (5/3)*dt;
 
 tempDiffRight = lastRodState(1)-lastRodState(2);
 heatFromRight = (-parameters.kappa*parameters.crossArea)*(dt/dx)*tempDiffRight;
@@ -67,7 +67,7 @@ end
 % Losing heat to 0 celsius at right end
 
 tempDiffLeft = lastRodState(end)-lastRodState(end-1);
-tempDiffRight = lastRodState(end) - 20;
+tempDiffRight = lastRodState(end) - parameters.roomTemp;
 tempDiff = tempDiffLeft + tempDiffRight;
 
 heatIntoSegment = (-parameters.kappa*parameters.crossArea)*(dt/dx)*tempDiff;

@@ -23,13 +23,18 @@
 // to the pins used:
 const int analogInPin = A0;  // Analog input pin that the potentiometer is attached to
 
+// In milliseconds
+const int sampleRate = 500;
+
 int sensorValue = 0;        // value read from the pot
 unsigned long startTime = 0;
 
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600); 
-  startTime = micros();
+  
+  // Will overflow after 50 days
+  startTime = millis();
 }
 
 void loop() {
@@ -47,7 +52,7 @@ void loop() {
   // wait 2 milliseconds before the next loop
   // for the analog-to-digital converter to settle
   // after the last reading:
-  delay(500);                     
+  delay(sampleRate);                     
 }
 
 // Returns a voltage from 0 to 5V based on an analog signal from 0 to 1023 bits
@@ -58,6 +63,6 @@ double toVolts(int analogInput)
 
 long elapsedTime()
 {
-   return (micros() - startTime); 
+   return (millis() - startTime); 
 }
 

@@ -40,8 +40,8 @@ ylabel('Temperature (Celsius)');
 %% Function Definitions
     function setParameters()
         % ===== Setting parameters and stuff
-        % K of Aluminum is 200
-        parameters.kappa = 200;
+        % K of Aluminum is 205 W/(m*K)
+        parameters.kappa = 205;
         
         % For Aluminum, at 25 Celsius, 900 J/kgC
         parameters.specificHeatCapacity = 900;
@@ -57,11 +57,11 @@ ylabel('Temperature (Celsius)');
         
         parameters.segments = 50;
         
-        parameters.initialTemperature = 20;
+        parameters.roomTemp = 20;
         
         timePoints = time/dt;
         
-        temperature = ones(timePoints, parameters.segments) * parameters.initialTemperature;
+        temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()
