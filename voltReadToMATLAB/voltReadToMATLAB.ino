@@ -19,14 +19,11 @@
  
  */
 
-// These constants won't change.  They're used to give names
-// to the pins used:
-const int analogInPin = A0;  // Analog input pin that the potentiometer is attached to
-
+// These constants won't change.
 // In milliseconds
 const int sampleRate = 500;
 
-int sensorValue = 0;        // value read from the pot
+
 unsigned long startTime = 0;
 
 void setup() {
@@ -37,21 +34,23 @@ void setup() {
   startTime = millis();
 }
 
-void loop() {
-  // read the analog in value:
-  sensorValue = analogRead(analogInPin);              
+void loop() {         
   
-  // print the results to the serial monitor:  
-  Serial.print(sensorValue);
-  Serial.print(", ");
-  Serial.print(toVolts(sensorValue), 6);
-  Serial.print(", ");
+  // print the results to the serial monitor: time, (sensorValue, volts), ... 
+  // To add sensors, just add a sensorValue and volt value pair in commas.
   Serial.print(elapsedTime());
+  Serial.print(", ")
+  
+  // Insert sensors here:
+
+  sampleSensorAt(A0);
+  sampleSensorAt(A1);
+  sampleSensorAt(A2);
+  sampleSensorAt(A3);
+
   Serial.print('\n');
 
-  // wait 2 milliseconds before the next loop
-  // for the analog-to-digital converter to settle
-  // after the last reading:
+  // wait sampleRate milliseconds before the next loop:
   delay(sampleRate);                     
 }
 
@@ -64,5 +63,21 @@ double toVolts(int analogInput)
 long elapsedTime()
 {
    return (millis() - startTime); 
+}
+
+/*
+	Reads the value at the specified analog input (analogInPin), converts it to Volts,
+	then prints it to the Serial stream as a comma combo: sensorValue, voltValue
+	*/
+void sampleSensorAt(int analogInPin)
+{
+	int sensorValue = analogRead(analogInPin);
+	int voltValue = toVolts(sensorValue);
+
+	// Output to Serial. Note that this will truncate the voltValue to a set number of decimal places
+	Serial.print(sensorValue);
+	Serial.print(',');
+	Serial.print(voltValue, 6);
+	Serial.print(',');
 }
 
