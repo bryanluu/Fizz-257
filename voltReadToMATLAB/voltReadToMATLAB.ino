@@ -39,7 +39,7 @@ void loop() {
   // print the results to the serial monitor: time, (sensorValue, volts), ... 
   // To add sensors, just add a sensorValue and volt value pair in commas.
   Serial.print(elapsedTime());
-  Serial.print(", ")
+  Serial.print(", ");
   
   // Insert sensors here:
 
@@ -72,12 +72,12 @@ long elapsedTime()
 void sampleSensorAt(int analogInPin)
 {
 	int sensorValue = analogRead(analogInPin);
-	int voltValue = toVolts(sensorValue);
+	double voltValue = toVolts(sensorValue);
 
 	// Output to Serial. Note that this will truncate the voltValue to a set number of decimal places
 	Serial.print(sensorValue);
-	Serial.print(',');
+	Serial.print(", ");
 	Serial.print(voltValue, 6);
-	Serial.print(',');
+	Serial.print(", ");
 }
 
