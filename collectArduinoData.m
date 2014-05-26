@@ -35,10 +35,12 @@ fprintf(dataFileID, '%s,%s,%s,%s,%s\n', 'Elapsed Time (seconds)', 'Voltage 1', .
     'Voltage 2', 'Voltage 3', 'Voltage 4');
 
 
-inputData = [0; 0; 0];
+inputData = zeros(9,1);
 last2YPoints = [0, 0; 0, 0; 0, 0; 0, 0];
 last2XPoints = [0, 0];
 count = 1;
+
+
 
 
 hold on;
@@ -50,24 +52,24 @@ ylabel('Voltage (V)');
 % Runs while the stream is still going.
 while isvalid(arduino)
     % Format is: time (milliseconds), analogInput, voltage, 
-    inputData = fscanf(arduino, '%f, %d, %f, %d, %f, %d, %f, %d, %f');
+    inputData = fscanf(arduino, '%f, %d, %f, %d, %f, %d, %f, %d, %f,');
     
     milliSeconds = inputData(1);
     secondsElapsed = milliSeconds/1.0e3
     
-    analogInput(1) = inputData(2)
+    analogInput(1) = inputData(2);
     voltage(1) = inputData(3)
     
-    analogInput(2) = inputData(4)
+    analogInput(2) = inputData(4);
     voltage(2) = inputData(5)
     
-    analogInput(3) = inputData(6)
+    analogInput(3) = inputData(6);
     voltage(3) = inputData(7)
     
-    analogInput(4) = inputData(8)
+    analogInput(4) = inputData(8);
     voltage(4) = inputData(9)
     
-    temperature = voltage*100
+    temperature = voltage*100;
     
     % Assign the last points to the current plotting points
     last2YPoints(:,1) = last2YPoints(:,2);
@@ -87,7 +89,7 @@ while isvalid(arduino)
     plot(last2XPoints, last2YPoints(4,:),'kx-');
     drawnow;
 end
-
+    
 catch fileError
     disp(fileError.message);
 end
