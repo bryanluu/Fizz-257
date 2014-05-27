@@ -1,102 +1,163 @@
 function data = collectArduinoData
 %Simply run this function to begin reading from the Arduino Serial Stream.
 
-% Open the serial output from Arduino
-arduino = serial('COM9', 'BaudRate', 9600);
-
 try
-
-% Close any remaining open serial ports
-fclose(instrfind);
-
-
-% Open arduino serial stream
-fopen(arduino);
-
-if ~isvalid(arduino)
-    error('Arduino is invalid!');
-end
-
-% Choose Data Output File
-[dataFile, folder] = uiputfile('data.csv');
-
-% Quit if pressed Cancel
-if dataFile == 0
-    return;
-end
-
-% Open output data File
-dataFileID = fopen(fullfile(folder, dataFile), 'w');
-
-
-
-% Print headers to the file
-fprintf(dataFileID, '%s,%s,%s,%s,%s\n', 'Elapsed Time (seconds)', 'Voltage 1', ...
-    'Voltage 2', 'Voltage 3', 'Voltage 4');
-
-
-inputData = zeros(9,1);
-last2YPoints = [0, 0; 0, 0; 0, 0; 0, 0];
-last2XPoints = [0, 0];
-count = 1;
-
-
-
-
-hold on;
-grid on;
-xlabel('Time (seconds)');
-ylabel('Voltage (V)');
-
-
-% Runs while the stream is still going.
-while isvalid(arduino)
-    % Format is: time (milliseconds), analogInput, voltage, 
-    inputData = fscanf(arduino, '%f, %d, %f, %d, %f, %d, %f, %d, %f,');
+    % Choose Data Output File
+    [dataFile, folder] = uiputfile('data.csv');
     
-    milliSeconds = inputData(1);
-    secondsElapsed = milliSeconds/1.0e3
+    % Quit if pressed Cancel
+    if dataFile == 0
+        return;
+    end
     
-    analogInput(1) = inputData(2);
-    voltage(1) = inputData(3)
+    % Open the serial output from Arduino
+    arduino = serial('COM9', 'BaudRate', 9600);
     
-    analogInput(2) = inputData(4);
-    voltage(2) = inputData(5)
+    dataFileID = initializeExperiment;
     
-    analogInput(3) = inputData(6);
-    voltage(3) = inputData(7)
+    numOfInputPorts = 6;
     
-    analogInput(4) = inputData(8);
-    voltage(4) = inputData(9)
+    last2DataPoints = [];
+    last2TimePoints = [];
+    portLabels = {};
     
-    temperature = voltage*100;
+    prepareInputs(numOfInputPorts);
     
-    % Assign the last points to the current plotting points
-    last2YPoints(:,1) = last2YPoints(:,2);
-    last2XPoints(1) = last2XPoints(2);
+    % Take the first couple of points to make a legend
+    inputData = sampleDataPoints(numOfInputPorts);
+    legend(portLabels);
+    if length(inputData) ~= (2*numOfInputPorts + 1)
+        errordlg('YO! Make sure to configure that Arduino to take in the appropriate number of inputs.');
+        endExperiment;
+    end
     
-    last2YPoints(:,2) = voltage;
-    last2XPoints(2) = secondsElapsed;
-    
-    % Print to file
-    fprintf(dataFileID, '%f,%f,%f,%f,%f\n', secondsElapsed, ...
-        voltage(1), voltage(2), voltage(3), voltage(4));
-    
-    % Red - A0, Blue - A1, Green - A2, Black - A3
-    plot(last2XPoints, last2YPoints(1,:),'rx-');
-    plot(last2XPoints, last2YPoints(2,:),'bx-');
-    plot(last2XPoints, last2YPoints(3,:),'gx-');
-    plot(last2XPoints, last2YPoints(4,:),'kx-');
-    drawnow;
-end
+    % Runs while the stream is still going.
+    while isvalid(arduino)
+        sampleDataPoints(numOfInputPorts);
+    end
     
 catch fileError
     disp(fileError.message);
+    endExperiment;
 end
 
-fclose(arduino);
-fclose(dataFileID);
 
+
+%% Subfunction Definitions
+    function dataFileID = initializeExperiment
+        % Close any remaining open serial ports
+        fclose(instrfind);
+        
+        % Open arduino serial stream
+        fopen(arduino);
+        
+        if ~isvalid(arduino)
+            error('Arduino is invalid!');
+        end
+        
+        % Open output data File
+        dataFileID = fopen(fullfile(folder, dataFile), 'w');
+        
+        disp('==========EXPERIMENT START==========');
+        disp(['Output file: ' fullfile(folder, dataFile)]);
+        disp(['Started on: ' date]);
+    end
+
+    function prepareInputs(numOfInputPorts)
+        % Creates a matrix with numOfInputPorts rows, with 2 cells
+        % representing the last two data points
+        last2DataPoints = zeros(numOfInputPorts, 2);
+        last2TimePoints = [0, 0];
+        
+        
+        
+        % Print headers to the file
+        fprintf(dataFileID, '%s,', 'Elapsed Time (seconds)');
+        
+        for inputIndex = 1:numOfInputPorts
+            portLabels{inputIndex} = ['A' num2str(inputIndex-1)];
+            fprintf(dataFileID, '%s,', ['Temperature ' inputIndex ' (\circ C)']);
+        end
+        
+        % Finish header line
+        fprintf(dataFileID, '\n');
+        
+        
+        % Prepare the plot
+        hold on;
+        grid on;
+        xlabel('Time (seconds)');
+        ylabel('Temperature (Celsius)');
+    end
+
+
+% Takes in a single serial line of data and interprets it
+    function inputData = sampleDataPoints(numOfInputPorts)
+        inputData = fscanf(arduino, '%f,');
+        
+        % Read Time Point
+        milliSeconds = inputData(1);
+        secondsElapsed = milliSeconds/1.0e3;
+        
+        % Cycle last 2 time points
+        last2TimePoints(1) = last2TimePoints(2);
+        last2TimePoints(2) = secondsElapsed;
+        
+        % Write time to file
+        fprintf(dataFileID, '%f,', secondsElapsed);
+        
+        % Display Time
+        disp(['---TIME (seconds): ' num2str(secondsElapsed) '---']);
+        
+        for inputIndex = 1:numOfInputPorts
+            analogInput(inputIndex) = inputData(inputIndex*2);
+            temperature(inputIndex) = inputData(inputIndex*2 + 1);
+            
+            % Cycle last 2 points
+            last2DataPoints(inputIndex, 1) = last2DataPoints(inputIndex, 2);
+            last2DataPoints(inputIndex, 2) = temperature(inputIndex);
+            
+            % Plot the points
+            plot(last2TimePoints, last2DataPoints(inputIndex, :), getPortColor(inputIndex));
+            
+            % Write data points to file
+            fprintf(dataFileID, '%f,', temperature(inputIndex));
+            
+            % Display Info
+            disp(['Temperature ' num2str(inputIndex) ': ' num2str(temperature(inputIndex))]);
+        end
+        
+        % Finish the line
+        fprintf(dataFileID, '\n');
+        
+        drawnow;
+    end
+
+    function endExperiment
+        fclose('all');
+        fclose(instrfind);
+    end
 
 end
 
+
+function lineStyle = getPortColor(inputIndex)
+switch inputIndex
+    case 1
+        lineStyle = 'bx-';
+    case 2
+        lineStyle = 'gx-';
+    case 3
+        lineStyle = 'rx-';
+    case 4
+        lineStyle = 'cx-';
+    case 5
+        lineStyle = 'mx-';
+    case 6
+        lineStyle = 'yx-';
+    case 7
+        lineStyle = 'kx-';
+    case 8
+        lineStyle = 'wx-';
+end
+end

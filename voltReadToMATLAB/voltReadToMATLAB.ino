@@ -43,10 +43,12 @@ void loop() {
   
   // Insert sensors here:
 
-  sampleSensorAt(A0);
-  sampleSensorAt(A1);
-  sampleSensorAt(A2);
-  sampleSensorAt(A3);
+  sampleThermocoupleAt(A0);
+  sampleThermocoupleAt(A1);
+  sampleThermocoupleAt(A2);
+  sampleThermocoupleAt(A3);
+  sampleTMPAt(A4);
+  sampleTMPAt(A5);
 
   Serial.print('\n');
 
@@ -66,18 +68,65 @@ long elapsedTime()
 }
 
 /*
-	Reads the value at the specified analog input (analogInPin), converts it to Volts,
-	then prints it to the Serial stream as a comma combo: sensorValue, voltValue
+	Reads the value at the specified analog input (analogInPin), converts it to temperature,
+	then prints it to the Serial stream as a comma combo: sensorValue, tempValue
 	*/
-void sampleSensorAt(int analogInPin)
+void sampleThermocoupleAt(int analogInPin)
 {
 	int sensorValue = analogRead(analogInPin);
-	double voltValue = toVolts(sensorValue);
+	double tempValue = getThermocoupleTemperature(analogInPin);
 
 	// Output to Serial. Note that this will truncate the voltValue to a set number of decimal places
 	Serial.print(sensorValue);
 	Serial.print(", ");
-	Serial.print(voltValue, 6);
+	Serial.print(tempValue, 6);
 	Serial.print(", ");
 }
 
+/*
+	Reads the value at the specified analog input (analogInPin), converts it to temperature,
+	then prints it to the Serial stream as a comma combo: sensorValue, tempValue
+	*/
+void sampleTMPAt(int analogInPin)
+{
+	int sensorValue = analogRead(analogInPin);
+	double tempValue = getTMPTemperature(analogInPin);
+
+	// Output to Serial. Note that this will truncate the voltValue to a set number of decimal places
+	Serial.print(sensorValue);
+	Serial.print(", ");
+	Serial.print(tempValue, 6);
+	Serial.print(", ");
+}
+
+double getTMPTemperature(int analogInPin)
+{
+    int sensorValue = analogRead(analogInPin);
+    double voltage = toVolts(sensorValue);
+    
+    return voltage*100.0;
+}
+
+// Returns the temperature, calculated from the voltage of the thermocouple located at the specified pin
+double getThermocoupleTemperature(int analogInPin)
+{
+  int sensorValue = analogRead(analogInPin);
+  double voltage = toVolts(sensorValue);
+  
+  switch (analogInPin)
+  {
+    case A0:
+      return tempFunc(voltage, 23.928, 21.463);
+    case A1:
+      return tempFunc(voltage, 24.115, 21.704);
+    case A2:
+      return tempFunc(voltage, 23.658, 26.046);
+    case A3:  
+      return tempFunc(voltage, 23.913, 26.979);
+  }
+}
+
+double tempFunc(double voltage, double A, double B)
+{
+  return (A*voltage + B);
+}
