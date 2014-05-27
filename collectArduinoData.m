@@ -76,7 +76,8 @@ end
         
         for inputIndex = 1:numOfInputPorts
             portLabels{inputIndex} = ['A' num2str(inputIndex-1)];
-            fprintf(dataFileID, '%s,', ['Temperature ' inputIndex ' (\circ C)']);
+            fprintf(dataFileID, '%s,', ...
+                ['Temperature ' num2str(inputIndex) ' (Celsius)']);
         end
         
         % Finish header line
@@ -87,7 +88,7 @@ end
         hold on;
         grid on;
         xlabel('Time (seconds)');
-        ylabel('Temperature (Celsius)');
+        ylabel('Temperature (\circ C)');
     end
 
 
