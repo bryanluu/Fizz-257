@@ -155,9 +155,9 @@ switch inputIndex
     case 5
         lineStyle = 'mx-';
     case 6
-        lineStyle = 'yx-';
-    case 7
         lineStyle = 'kx-';
+    case 7
+        lineStyle = 'yx-';
     case 8
         lineStyle = 'wx-';
 end
