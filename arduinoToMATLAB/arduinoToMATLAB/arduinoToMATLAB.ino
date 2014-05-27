@@ -22,6 +22,8 @@
 // These constants won't change.
 // In milliseconds
 const int sampleRate = 500;
+const double maxResistorTemp = 50.0;
+const int mosfetPin = 0;
 
 
 unsigned long startTime = 0;
@@ -32,6 +34,8 @@ void setup() {
   
   // Will overflow after 50 days
   startTime = millis();
+  
+  pinMode(mosfetPin, OUTPUT);
 }
 
 void loop() {         
@@ -47,11 +51,22 @@ void loop() {
   sampleThermocoupleAt(A1);
   sampleThermocoupleAt(A2);
   sampleThermocoupleAt(A3);
-  sampleTMPAt(A4);
+  // A4 is attached to Power Resistor
+  double resistorTemp = sampleTMPAt(A4);
   sampleTMPAt(A5);
 
   Serial.print('\n');
-
+  
+  // If resistor temp is too high, turn off MOSFET and disable power.
+  if(resistorTemp > maxResistorTemp)
+  {
+    digitalWrite(mosfetPin, LOW);
+  }
+  else
+  {
+    digitalWrite(mosfetPin, HIGH);
+  }
+  
   // wait sampleRate milliseconds before the next loop:
   delay(sampleRate);                     
 }
@@ -68,10 +83,10 @@ long elapsedTime()
 }
 
 /*
-	Reads the value at the specified analog input (analogInPin), converts it to temperature,
+	Reads and returns the value at the specified analog input (analogInPin), converts it to temperature,
 	then prints it to the Serial stream as a comma combo: sensorValue, tempValue
 	*/
-void sampleThermocoupleAt(int analogInPin)
+double sampleThermocoupleAt(int analogInPin)
 {
 	int sensorValue = analogRead(analogInPin);
 	double tempValue = getThermocoupleTemperature(analogInPin);
@@ -81,13 +96,15 @@ void sampleThermocoupleAt(int analogInPin)
 	Serial.print(", ");
 	Serial.print(tempValue, 6);
 	Serial.print(", ");
+
+        return tempValue;
 }
 
 /*
-	Reads the value at the specified analog input (analogInPin), converts it to temperature,
+	Reads and returns at the specified analog input (analogInPin), converts it to temperature,
 	then prints it to the Serial stream as a comma combo: sensorValue, tempValue
 	*/
-void sampleTMPAt(int analogInPin)
+double sampleTMPAt(int analogInPin)
 {
 	int sensorValue = analogRead(analogInPin);
 	double tempValue = getTMPTemperature(analogInPin);
@@ -97,6 +114,8 @@ void sampleTMPAt(int analogInPin)
 	Serial.print(", ");
 	Serial.print(tempValue, 6);
 	Serial.print(", ");
+
+        return tempValue;
 }
 
 double getTMPTemperature(int analogInPin)
