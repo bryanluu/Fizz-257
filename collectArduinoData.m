@@ -15,7 +15,7 @@ try
     
     dataFileID = initializeExperiment;
     
-    numOfInputPorts = 6;
+    numOfInputPorts = 5;
     
     last2DataPoints = [];
     last2TimePoints = [];
@@ -89,6 +89,7 @@ end
         grid on;
         xlabel('Time (seconds)');
         ylabel('Temperature (\circ C)');
+        ylim([0 80]);
     end
 
 
@@ -145,20 +146,20 @@ end
 function lineStyle = getPortColor(inputIndex)
 switch inputIndex
     case 1
-        lineStyle = 'bx-';
+        lineStyle = 'b.-';
     case 2
-        lineStyle = 'gx-';
+        lineStyle = 'g.-';
     case 3
-        lineStyle = 'rx-';
+        lineStyle = 'r.-';
     case 4
-        lineStyle = 'cx-';
+        lineStyle = 'c.-';
     case 5
-        lineStyle = 'mx-';
+        lineStyle = 'm.-';
     case 6
-        lineStyle = 'kx-';
+        lineStyle = 'k.-';
     case 7
-        lineStyle = 'yx-';
+        lineStyle = 'y.-';
     case 8
-        lineStyle = 'wx-';
+        lineStyle = 'w.-';
 end
 end
