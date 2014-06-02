@@ -28,10 +28,11 @@ setParameters();
 
 calculateTemperatureGradient;
 
-plot(temperature(:, getDistanceIndex(0.10)), 'r');
+plot(temperature(:, getDistanceIndex(0)), 'r');
 hold on;
-plot(temperature(:, getDistanceIndex(0.50)), 'g');
-plot(temperature(:, getDistanceIndex(0.90)), 'b');
+plot(temperature(:, getDistanceIndex(0.075)), 'g');
+plot(temperature(:, getDistanceIndex(0.15)), 'b');
+plot(temperature(:, getDistanceIndex(0.225)), 'k');
 xlabel('Time (s)');
 ylabel('Temperature (Celsius)');
 
@@ -62,6 +63,7 @@ ylabel('Temperature (Celsius)');
         timePoints = time/dt;
         
         temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
+
     end
 
     function calculateTemperatureGradient()

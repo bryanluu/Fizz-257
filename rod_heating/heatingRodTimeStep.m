@@ -28,8 +28,8 @@ newRodState = lastRodState;
 
 %% Leftmost Segment
     
-% 100W coming in from left, 100J/s * dt = Joules gained in that time
-heatFromLeft = (5/3)*dt;
+% 5W coming in from left, 5J/s * dt = Joules gained in that time
+heatFromLeft = (100/15)*dt;
 
 tempDiffRight = lastRodState(1)-lastRodState(2);
 heatFromRight = (-parameters.kappa*parameters.crossArea)*(dt/dx)*tempDiffRight;
@@ -39,7 +39,7 @@ heatIntoSegment = heatFromLeft + heatFromRight;
 totalHeat = heatIntoSegment;
 
 tempIncrease = totalHeat/(parameters.specificHeatCapacity*dm);
-newRodState(1) = newRodState(1) + tempIncrease;
+newRodState(1) = lastRodState(1) + tempIncrease;
 
 
     
@@ -48,33 +48,20 @@ for segment = 2:(segments-1)
     %offset to exclude the first data point, which represents left side
     %of rod
 
-
-    tempDiffLeft = lastRodState(segment)-lastRodState(segment-1);
-    tempDiffRight = lastRodState(segment) - lastRodState(segment+1);
-    tempDiff = tempDiffLeft + tempDiffRight;
-
-    heatIntoSegment = (-parameters.kappa*parameters.crossArea)*(dt/dx)*tempDiff;
+    doubleDiffTerm = lastRodState(segment-1) - 2*lastRodState(segment) + lastRodState(segment+1);
 
 
-    tempIncrease = (heatIntoSegment)/(parameters.specificHeatCapacity*dm);
+    tempIncrease = (parameters.kappa*dt*doubleDiffTerm)/(parameters.density*parameters.specificHeatCapacity*dx^2);
 
-    newRodState(segment) = newRodState(segment) + tempIncrease;
+    newRodState(segment) = lastRodState(segment) + tempIncrease;
 end
 
 
 %% Rightmost Segment
 
-% Losing heat to 0 celsius at right end
-
-tempDiffLeft = lastRodState(end)-lastRodState(end-1);
-tempDiffRight = lastRodState(end) - parameters.roomTemp;
-tempDiff = tempDiffLeft + tempDiffRight;
-
-heatIntoSegment = (-parameters.kappa*parameters.crossArea)*(dt/dx)*tempDiff;
-
-tempIncrease = (heatIntoSegment)/(parameters.specificHeatCapacity*dm);
-
-newRodState(end) = newRodState(end) + tempIncrease;
+% Constant temperature at end
+tempEnd = parameters.roomTemp;
+newRodState(end) = tempEnd;
 
 
 end
