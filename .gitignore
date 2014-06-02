@@ -1,3 +1,6 @@
+#Ignore experiment data folder
+Data/
+
 #################
 ## Eclipse
 #################
