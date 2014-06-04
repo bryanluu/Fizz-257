@@ -55,10 +55,8 @@ void loop() {
   sampleThermocoupleAt(A3);
   // A4 is attached to Power Resistor
   sampleTMPAt(A4);
-  //sampleTMPAt(A5);
-
-  Serial.print('\n');
-  
+  sampleTMPAt(A5);
+  Serial.print("\n");
   // If resistor temp is too high, turn off MOSFET and disable power.
   if(experimentFinished == false)
   {
@@ -147,7 +145,7 @@ double getThermocoupleTemperature(int analogInPin)
     case A2:
       return tempFunc(voltage, 23.658, 21.45, 1.37);
     case A3:  
-      return tempFunc(voltage, 23.913, 21.45, 1.37); 
+      return tempFunc(voltage, 23.107, 21.45, 1.37); //23.913 
   }
 }
 
