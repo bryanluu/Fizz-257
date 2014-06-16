@@ -29,16 +29,18 @@ newRodState = lastRodState;
 %% Leftmost Segment
     
 % 5W coming in from left, 5J/s * dt = Joules gained in that time
-heatFromLeft = (100/15)*dt;
+heatFromLeft = (100/15);
 
-tempDiffRight = lastRodState(1)-lastRodState(2);
-heatFromRight = (-parameters.kappa*parameters.crossArea)*(dt/dx)*tempDiffRight;
+heatFromRight = conductiveHeatIntoFrom(lastRodState(1), lastRodState(2), parameters.kappa, parameters.crossArea, dx);
 
-heatIntoSegment = heatFromLeft + heatFromRight;
 
-totalHeat = heatIntoSegment;
+% cylindrical surface area + side cross section
+convectionArea = 2*pi*parameters.radius*dx + parameters.crossArea;
+heatLostToConvection = convectiveHeatLostFromTo(lastRodState(1), parameters.roomTemp, parameters.hConvection, convectionArea);
 
-tempIncrease = totalHeat/(parameters.specificHeatCapacity*dm);
+totalHeat = heatFromLeft + heatFromRight - heatLostToConvection;
+
+tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
 newRodState(1) = lastRodState(1) + tempIncrease;
 
 
@@ -47,22 +49,49 @@ newRodState(1) = lastRodState(1) + tempIncrease;
 for segment = 2:(segments-1)
     %offset to exclude the first data point, which represents left side
     %of rod
+    heatFromLeft = conductiveHeatIntoFrom(lastRodState(segment), lastRodState(segment-1), parameters.kappa, parameters.crossArea, dx);
+    heatFromRight = conductiveHeatIntoFrom(lastRodState(segment), lastRodState(segment+1), parameters.kappa, parameters.crossArea, dx);
+    
+    % cylindrical surface area + side cross section
+    convectionArea = 2*pi*parameters.radius*dx;
+    heatLostToConvection = convectiveHeatLostFromTo(lastRodState(segment), parameters.roomTemp, parameters.hConvection, convectionArea);
 
-    doubleDiffTerm = lastRodState(segment-1) - 2*lastRodState(segment) + lastRodState(segment+1);
+    totalHeat = heatFromLeft + heatFromRight - heatLostToConvection;
 
-
-    tempIncrease = (parameters.kappa*dt*doubleDiffTerm)/(parameters.density*parameters.specificHeatCapacity*dx^2);
-
+    tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
+    
     newRodState(segment) = lastRodState(segment) + tempIncrease;
 end
 
 
 %% Rightmost Segment
 
-% Constant temperature at end
-tempEnd = parameters.roomTemp;
-newRodState(end) = tempEnd;
+heatFromLeft = conductiveHeatIntoFrom(lastRodState(end), lastRodState(end-1), parameters.kappa, parameters.crossArea, dx);
+
+heatFromRight = 0;
+
+
+% cylindrical surface area + side cross section
+convectionArea = 2*pi*parameters.radius*dx + parameters.crossArea;
+heatLostToConvection = convectiveHeatLostFromTo(lastRodState(end), parameters.roomTemp, parameters.hConvection, convectionArea);
+
+totalHeat = heatFromLeft + heatFromRight - heatLostToConvection;
+
+tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
+newRodState(end) = lastRodState(end) + tempIncrease;
 
 
 end
 
+function H = conductiveHeatIntoFrom(temp, otherTemp, kappa, contactArea, contactDistance)
+    H = (-kappa*contactArea/contactDistance)*(temp - otherTemp);
+end
+
+function H = convectiveHeatLostFromTo(temp, roomTemp, convectionConstant, contactArea)
+    H = convectionConstant*contactArea*(temp - roomTemp);
+end
+
+function H = radiationHeatLossFrom(temp, contactArea, emissivity)
+    stefan_boltzmann = 5.6703E-8;
+    H = contactArea*emissivity*stefan_boltzmann*(temp^4);
+end

@@ -26,6 +26,8 @@ timePoints = [];
 
 setParameters();
 
+initialConditions();
+
 calculateTemperatureGradient;
 
 plot(temperature(:, getDistanceIndex(0)), 'r');
@@ -44,14 +46,18 @@ ylabel('Temperature (Celsius)');
         % K of Aluminum is 205 W/(m*K)
         parameters.kappa = 205;
         
+        % Convection constant for Aluminum
+        parameters.hConvection = 1;
+        
         % For Aluminum, at 25 Celsius, 900 J/kgC
         parameters.specificHeatCapacity = 900;
         
         % For Aluminum, at 2700 kg/m^3
         parameters.density = 2700;
         
-        % Cross-sectional area of circle radius 0.01m
-        parameters.crossArea = 0.005^2 * pi;
+        % Radius is 22.5 mm = 0.0225m
+        parameters.radius = 0.0225;
+        parameters.crossArea = parameters.radius^2 * pi;
         
         % 1 foot
         parameters.rodLength = 0.3048;
@@ -61,9 +67,11 @@ ylabel('Temperature (Celsius)');
         parameters.roomTemp = 20;
         
         timePoints = time/dt;
-        
-        temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
 
+    end
+
+    function initialConditions()
+        temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()
