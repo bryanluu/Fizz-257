@@ -22,7 +22,7 @@
 // These constants won't change.
 // In milliseconds
 const int sampleRate = 1000;
-const double maxResistorTemp = 80.0;
+const double maxResistorTemp = 120;
 const int mosfetPin = 13;
 
 boolean experimentFinished = false;
@@ -55,7 +55,7 @@ void loop() {
   sampleThermocoupleAt(A3);
   // A4 is attached to Power Resistor
   sampleTMPAt(A4);
-  sampleTMPAt(A5);
+  //sampleTMPAt(A5);
   Serial.print("\n");
   // If resistor temp is too high, turn off MOSFET and disable power.
   if(experimentFinished == false)
@@ -139,13 +139,13 @@ double getThermocoupleTemperature(int analogInPin)
   switch (analogInPin)
   {
     case A0:
-      return tempFunc(voltage, 23.928, 18.0404, 1.37);
+      return tempFunc(voltage, 23.528, 18.0404, 1.37);
     case A1:
-      return tempFunc(voltage, 24.115, 18.0482, 1.37);
+      return tempFunc(voltage, 25.115, 23.0482, 1.37);
     case A2:
-      return tempFunc(voltage, 23.658, 21.45, 1.37);
+      return tempFunc(voltage, 25.158, 21.45, 1.37);
     case A3:  
-      return tempFunc(voltage, 23.107, 21.45, 1.37); //23.913 
+      return tempFunc(voltage, 23, 17.375, 1.37); //23.913 
   }
 }
 
