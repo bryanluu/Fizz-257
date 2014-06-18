@@ -29,7 +29,7 @@ newRodState = lastRodState;
 %% Leftmost Segment
     
 % 5W coming in from left, 5J/s * dt = Joules gained in that time
-heatFromLeft = (100/15);
+heatFromLeft = 0;
 
 heatFromRight = conductiveHeatIntoFrom(lastRodState(1), lastRodState(2), parameters.kappa, parameters.crossArea, dx);
 

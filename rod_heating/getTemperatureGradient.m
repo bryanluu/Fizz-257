@@ -47,7 +47,7 @@ ylabel('Temperature (Celsius)');
         parameters.kappa = 205;
         
         % Convection constant for Aluminum
-        parameters.hConvection = 1;
+        parameters.hConvection = 12;
         
         % For Aluminum, at 25 Celsius, 900 J/kgC
         parameters.specificHeatCapacity = 900;
@@ -56,7 +56,7 @@ ylabel('Temperature (Celsius)');
         parameters.density = 2700;
         
         % Radius is 22.5 mm = 0.0225m
-        parameters.radius = 0.0225;
+        parameters.radius = 0.0225/2;
         parameters.crossArea = parameters.radius^2 * pi;
         
         % 1 foot
@@ -71,7 +71,7 @@ ylabel('Temperature (Celsius)');
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
+        temperature = ones(timePoints, parameters.segments) * 80.0;
     end
 
     function calculateTemperatureGradient()
