@@ -23,6 +23,7 @@ function temperature = getTemperatureGradient(time, dt)
 % Initialize Parameters
 parameters = struct;
 timePoints = [];
+timeVector = [];
 
 setParameters();
 
@@ -30,11 +31,11 @@ initialConditions();
 
 calculateTemperatureGradient;
 
-plot(temperature(:, getDistanceIndex(0)), 'r');
+plot(timeVector, temperature(:, getDistanceIndex(0)), 'r');
 hold on;
-plot(temperature(:, getDistanceIndex(0.075)), 'g');
-plot(temperature(:, getDistanceIndex(0.15)), 'b');
-plot(temperature(:, getDistanceIndex(0.225)), 'k');
+plot(timeVector, temperature(:, getDistanceIndex(0.075)), 'g');
+plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b');
+plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k');
 xlabel('Time (s)');
 ylabel('Temperature (Celsius)');
 
@@ -67,11 +68,13 @@ ylabel('Temperature (Celsius)');
         parameters.roomTemp = 20;
         
         timePoints = time/dt;
+        
+        timeVector = linspace(0, time, timePoints);
 
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) * 80.0;
+        temperature = ones(timePoints, parameters.segments) * 55.0;
     end
 
     function calculateTemperatureGradient()

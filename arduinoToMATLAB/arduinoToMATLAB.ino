@@ -21,7 +21,7 @@
 
 // These constants won't change.
 // In milliseconds
-const int sampleRate = 1000;
+const int sampleRate = 3000;
 const double maxResistorTemp = 120;
 const int mosfetPin = 13;
 
@@ -139,17 +139,17 @@ double getThermocoupleTemperature(int analogInPin)
   switch (analogInPin)
   {
     case A0:
-      return tempFunc(voltage, 23.528, 18.0404, 1.37);
+      return tempFunc(voltage, 22.693, -8.87);
     case A1:
-      return tempFunc(voltage, 25.115, 23.0482, 1.37);
+      return tempFunc(voltage, 27.231, -14.774);
     case A2:
-      return tempFunc(voltage, 25.158, 21.45, 1.37);
+      return tempFunc(voltage, 22.501, -12.9477);
     case A3:  
-      return tempFunc(voltage, 23, 17.375, 1.37); //23.913 
+      return tempFunc(voltage, 24.112, -8.6022); //23.913 
   }
 }
 
-double tempFunc(double voltage, double A, double B, double C)
+double tempFunc(double voltage, double A, double B)
 {
-  return (A*(voltage-C) + B);
+  return (A*(voltage) + B);
 }
