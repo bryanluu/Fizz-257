@@ -1,5 +1,6 @@
 #Ignore experiment data folder
 Data/
+rod_heating/Predictions
 
 #################
 ## Eclipse
