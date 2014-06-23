@@ -139,13 +139,13 @@ double getThermocoupleTemperature(int analogInPin)
   switch (analogInPin)
   {
     case A0:
-      return tempFunc(voltage, 22.693, -8.87);
+      return tempFunc(voltage, 22.84, -6.2214);
     case A1:
-      return tempFunc(voltage, 27.231, -14.774);
+      return tempFunc(voltage, 20.772, -0.8809);
     case A2:
-      return tempFunc(voltage, 22.501, -12.9477);
+      return tempFunc(voltage, 21.621, -7.1351);
     case A3:  
-      return tempFunc(voltage, 24.112, -8.6022); //23.913 
+      return tempFunc(voltage, 21.3, -0.7965); //23.913 
   }
 }
 

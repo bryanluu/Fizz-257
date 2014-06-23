@@ -146,17 +146,17 @@ end
 function lineStyle = getPortColor(inputIndex)
 switch inputIndex
     case 1
-        lineStyle = 'b.-';
-    case 2
-        lineStyle = 'g.-';
-    case 3
         lineStyle = 'r.-';
+    case 2
+        lineStyle = 'b.-';
+    case 3
+        lineStyle = 'g.-';
     case 4
-        lineStyle = 'c.-';
+        lineStyle = 'k.-';
     case 5
         lineStyle = 'm.-';
     case 6
-        lineStyle = 'k.-';
+        lineStyle = 'c.-';
     case 7
         lineStyle = 'y.-';
     case 8
