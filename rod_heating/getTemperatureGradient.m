@@ -38,6 +38,7 @@ plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b');
 plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k');
 xlabel('Time (s)');
 ylabel('Temperature (Celsius)');
+hold off;
 
 
 
@@ -67,6 +68,8 @@ ylabel('Temperature (Celsius)');
         
         parameters.roomTemp = 20;
         
+        parameters.emissivity = 1.0;
+        
         timePoints = time/dt;
         
         timeVector = linspace(0, time, timePoints);
@@ -74,7 +77,7 @@ ylabel('Temperature (Celsius)');
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) * 55.0;
+        temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()
