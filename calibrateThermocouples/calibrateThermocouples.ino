@@ -21,7 +21,7 @@
 
 // These constants won't change.
 // In milliseconds
-const int sampleRate = 10000;
+const int sampleRate = 1000;
 const double maxResistorTemp = 120;
 const int mosfetPin = 13;
 
