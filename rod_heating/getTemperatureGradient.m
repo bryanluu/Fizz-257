@@ -81,7 +81,7 @@ calculateTemperatureGradient;
         parameters.crossArea = parameters.radius^2 * pi;
         
         % 1 foot
-        parameters.rodLength = 0.225;
+        parameters.rodLength = 0.3048;
         
         parameters.segments = 50;
         
@@ -100,7 +100,7 @@ calculateTemperatureGradient;
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) *2.0;%* parameters.roomTemp;
+        temperature = ones(timePoints, parameters.segments) *55.0;%* parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()
