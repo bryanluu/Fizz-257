@@ -27,7 +27,7 @@ function temperature = getTemperatureGradient(varargin)
 
 if isempty(varargin)
     time = 5000;
-    dt = 0.1;
+    dt = 1;
 else
     time = varargin{1};
     dt = varargin{2};
@@ -83,7 +83,7 @@ calculateTemperatureGradient;
         % 1 foot
         parameters.rodLength = 0.3048;
         
-        parameters.segments = 50;
+        parameters.segments = 10;
         
         parameters.roomTemp = 20;
         
