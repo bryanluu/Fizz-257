@@ -46,11 +46,13 @@ calculateTemperatureGradient;
 
 % if length(varargin) <= 2
     
-    plot(timeVector, temperature(:, getDistanceIndex(0)), 'r');
+    plotTemperatureAt(0, 'r');
     hold on;
-    plot(timeVector, temperature(:, getDistanceIndex(0.075)), 'g');
-    plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b');
-    plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k');
+    plotTemperatureAt(0.075, 'g');
+    
+    plotTemperatureAt(0.15, 'b');
+    
+    plotTemperatureAt(0.225, 'k');
     xlabel('Time (s)');
     ylabel('Temperature (Celsius)');
     hold off;
@@ -161,6 +163,10 @@ calculateTemperatureGradient;
                 varNum = varNum + 1;
             end
         end
+    end
+
+    function plotTemperatureAt(distance, color)
+        plot(timeVector, temperature(:, getDistanceIndex(distance)), color);
     end
 
 
