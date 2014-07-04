@@ -1,4 +1,4 @@
-function temperature = getTemperatureGradient(time, dt,c,kappa,power)
+function temperature = getTemperatureGradient(time, dt)
 % getTemperatureGradient returns the temperature gradient matrix of copper
 % rod, with a plot of temperature vs. time at the specified distance x
 % from the left end of the rod.
@@ -25,7 +25,7 @@ parameters = struct;
 timePoints = [];
 timeVector = [];
 
-setParameters(c,kappa,power);
+setParameters();
 
 initialConditions();
 
@@ -43,34 +43,32 @@ hold off;
 
 
 %% Function Definitions
-    function setParameters(c,kappa,power)
+    function setParameters()
         % ===== Setting parameters and stuff
         % K of Aluminum is 205 W/(m*K)
-        parameters.kappa = kappa;
+        parameters.kappa = 205;
         
         % Convection constant for Aluminum
         parameters.hConvection = 12;
         
         % For Aluminum, at 25 Celsius, 900 J/kgC
-        parameters.specificHeatCapacity = c;
+        parameters.specificHeatCapacity = 900;
         
         % For Aluminum, at 2700 kg/m^3
         parameters.density = 2700;
         
-        % Diameter is 22.5 mm = 0.0225m
+        % Radius is 22.5 mm = 0.0225m
         parameters.radius = 0.0225/2;
         parameters.crossArea = parameters.radius^2 * pi;
         
         % 1 foot
-        parameters.rodLength = 0.225;
+        parameters.rodLength = 0.3048;
         
         parameters.segments = 50;
         
         parameters.roomTemp = 20;
         
         parameters.emissivity = 1.0;
-        
-        parameters.power = power;
         
         timePoints = time/dt;
         
@@ -79,7 +77,7 @@ hold off;
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) *2.0;%* parameters.roomTemp;
+        temperature = ones(timePoints, parameters.segments) * parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()
