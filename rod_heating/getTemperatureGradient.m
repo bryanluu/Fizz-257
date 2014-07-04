@@ -68,7 +68,7 @@ calculateTemperatureGradient;
         parameters.kappa = 205;
         
         % Convection constant for Aluminum
-        parameters.hConvection = 12;
+        parameters.hConvection = 12.5;
         
         % For Aluminum, at 25 Celsius, 900 J/kgC
         parameters.c = 900;
