@@ -42,7 +42,7 @@ contactArea = 2*pi*parameters.radius*dx;
 
 totalHeat = heatFromLeft + heatFromRight;% - heatLostToConvection - heatLostToRadiation;
 
-tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
+tempIncrease = totalHeat*dt/(parameters.c*dm);
 newRodState(1) = lastRodState(1) + tempIncrease;
 
 
@@ -62,7 +62,7 @@ for segment = 2:(segments-1)
 
     totalHeat = heatFromLeft + heatFromRight;% - heatLostToConvection - heatLostToRadiation;
 
-    tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
+    tempIncrease = totalHeat*dt/(parameters.c*dm);
     
     newRodState(segment) = lastRodState(segment) + tempIncrease;
 end
@@ -83,7 +83,7 @@ contactArea = 2*pi*parameters.radius*dx + parameters.crossArea;
 
 totalHeat = heatFromLeft + heatFromRight;% - heatLostToConvection - heatLostToRadiation;
 
-tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
+tempIncrease = totalHeat*dt/(parameters.c*dm);
 newRodState(end) = lastRodState(end) + tempIncrease;
 
 

@@ -1,4 +1,4 @@
-function temperature = getTemperatureGradient(time, dt,c,kappa,power)
+function temperature = getTemperatureGradient(varargin)
 % getTemperatureGradient returns the temperature gradient matrix of copper
 % rod, with a plot of temperature vs. time at the specified distance x
 % from the left end of the rod.
@@ -18,41 +18,58 @@ function temperature = getTemperatureGradient(time, dt,c,kappa,power)
 %     parameters.density      % Density of the rod material
 %     parameters.crossArea    % Cross sectional area of rod
 %
+%
+%   getTemperatureGradient(T, dt, fitParamName, guessValue, ...)
+%
+% returns the temperature gradient, with the specified parameter, given by
+% fitParamName, modified to guessValue. Any number of fit parameters can be
+% specified in this format (name, guessValue) after T and dt.
 
+if isempty(varargin)
+    time = 5000;
+    dt = 0.1;
+else
+    time = varargin{1};
+    dt = varargin{2};
+end
 
 % Initialize Parameters
 parameters = struct;
 timePoints = [];
 timeVector = [];
 
-setParameters(c,kappa,power);
+setParameters();
 
 initialConditions();
 
 calculateTemperatureGradient;
 
-plot(timeVector, temperature(:, getDistanceIndex(0)), 'r');
-hold on;
-plot(timeVector, temperature(:, getDistanceIndex(0.075)), 'g');
-plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b');
-plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k');
-xlabel('Time (s)');
-ylabel('Temperature (Celsius)');
-hold off;
+% if length(varargin) <= 2
+    
+    plot(timeVector, temperature(:, getDistanceIndex(0)), 'r');
+    hold on;
+    plot(timeVector, temperature(:, getDistanceIndex(0.075)), 'g');
+    plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b');
+    plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k');
+    xlabel('Time (s)');
+    ylabel('Temperature (Celsius)');
+    hold off;
+    
+% end
 
 
 
 %% Function Definitions
-    function setParameters(c,kappa,power)
+    function setParameters()
         % ===== Setting parameters and stuff
         % K of Aluminum is 205 W/(m*K)
-        parameters.kappa = kappa;
+        parameters.kappa = 205;
         
         % Convection constant for Aluminum
         parameters.hConvection = 12;
         
         % For Aluminum, at 25 Celsius, 900 J/kgC
-        parameters.specificHeatCapacity = c;
+        parameters.c = 900;
         
         % For Aluminum, at 2700 kg/m^3
         parameters.density = 2700;
@@ -70,12 +87,14 @@ hold off;
         
         parameters.emissivity = 1.0;
         
-        parameters.power = power;
+        parameters.power = 5;
         
         timePoints = time/dt;
         
         timeVector = linspace(0, time, timePoints);
-
+        
+        setFitParams();
+        
     end
 
     function initialConditions()
@@ -103,6 +122,44 @@ hold off;
             distanceIndex = parameters.segments;
         else
             distanceIndex = round((x/parameters.rodLength)*parameters.segments);
+        end
+    end
+
+    function setFitParams()
+        if length(varargin) > 2
+            varNum = 3;
+            while(varNum < length(varargin))
+                
+                varName = varargin{varNum};
+                
+                if ~isa(varName, 'char')
+                    errordlg(['Input variable ' num2str(varNum) ' must be a string! Way to be scrub! Continuing...'], ...
+                        'Input Error', 'modal');
+                    
+                    varNum = varNum + 1;
+                    continue;
+                end
+                
+                if ~isfield(parameters, varName)
+                    errordlg([varName ' is not a valid parameter! Way to be scrub! Continuing...'], ...
+                        'Input Error', 'modal');
+
+                    varNum = varNum + 1;
+                    continue;
+                end
+                
+                varNum = varNum + 1;
+                varValue = varargin{varNum};
+                if ~isa(varValue, 'double')
+                    errordlg([varName ' needs it''s value after it! Way to be scrub! Continuing...'], ...
+                        'Input Error', 'modal');
+                    
+                    varNum = varNum + 1;
+                    continue;
+                end
+                parameters = setfield(parameters, varName, varValue);
+                varNum = varNum + 1;
+            end
         end
     end
 
