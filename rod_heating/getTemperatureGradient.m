@@ -29,15 +29,15 @@ setParameters(c,kappa,power);
 
 initialConditions();
 
-calculateTemperatureGradient;
+calculateTemperatureGradient();
 
-plot(timeVector, temperature(:, getDistanceIndex(0)), 'r');
+plot(timeVector, temperature(:, getDistanceIndex(0)), 'r.');
 hold on;
-plot(timeVector, temperature(:, getDistanceIndex(0.075)), 'g');
-plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b');
-plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k');
-xlabel('Time (s)');
-ylabel('Temperature (Celsius)');
+plot(timeVector, temperature(:, getDistanceIndex(0.075)), 'g.');
+plot(timeVector, temperature(:, getDistanceIndex(0.15)), 'b.');
+plot(timeVector, temperature(:, getDistanceIndex(0.225)), 'k.');
+xlabel('Time (s)','fontsize',14);
+ylabel('Temperature (Celsius)','fontsize',14);
 hold off;
 
 
@@ -68,7 +68,7 @@ hold off;
         
         parameters.roomTemp = 20;
         
-        parameters.emissivity = 1.0;
+        parameters.emissivity = 0.03;
         
         parameters.power = power;
         
@@ -79,7 +79,7 @@ hold off;
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) *2.0;%* parameters.roomTemp;
+        temperature = ones(timePoints, parameters.segments) * 0;%*parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()

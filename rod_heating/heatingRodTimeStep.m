@@ -40,7 +40,8 @@ contactArea = 2*pi*parameters.radius*dx;
 
 %heatLostToRadiation = radiationHeatLossFrom(lastRodState(1), contactArea, parameters.emissivity);
 
-totalHeat = heatFromLeft + heatFromRight;% - heatLostToConvection - heatLostToRadiation;
+%totalHeat = - heatLostToConvection - heatLostToRadiation;
+totalHeat = heatFromLeft + heatFromRight;
 
 tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
 newRodState(1) = lastRodState(1) + tempIncrease;
@@ -60,7 +61,8 @@ for segment = 2:(segments-1)
     
     %heatLostToRadiation = radiationHeatLossFrom(lastRodState(segment), contactArea, parameters.emissivity);
 
-    totalHeat = heatFromLeft + heatFromRight;% - heatLostToConvection - heatLostToRadiation;
+    %totalHeat =  - heatLostToConvection - heatLostToRadiation;
+    totalHeat = heatFromLeft + heatFromRight;
 
     tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
     
@@ -72,7 +74,7 @@ end
 
 heatFromLeft = conductiveHeatIntoFrom(lastRodState(end), lastRodState(end-1), parameters.kappa, parameters.crossArea, dx);
 
-heatFromRight = conductiveHeatIntoFrom(lastRodState(end),0,parameters.kappa,parameters.crossArea,dx);
+heatFromRight = conductiveHeatIntoFrom(lastRodState(end), 0, parameters.kappa, parameters.crossArea, dx);
 
 
 % cylindrical surface area + side cross section
@@ -81,7 +83,8 @@ contactArea = 2*pi*parameters.radius*dx + parameters.crossArea;
 
 %heatLostToRadiation = radiationHeatLossFrom(lastRodState(end), contactArea, parameters.emissivity);
 
-totalHeat = heatFromLeft + heatFromRight;% - heatLostToConvection - heatLostToRadiation;
+%totalHeat = - heatLostToConvection - heatLostToRadiation;
+totalHeat = heatFromLeft + heatFromRight;
 
 tempIncrease = totalHeat*dt/(parameters.specificHeatCapacity*dm);
 newRodState(end) = lastRodState(end) + tempIncrease;
