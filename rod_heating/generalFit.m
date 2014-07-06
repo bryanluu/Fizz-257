@@ -4,33 +4,31 @@ endTime = ElapsedTimeseconds(end);
 timePoints = length(ElapsedTimeseconds);
 dt = endTime/timePoints;
 
+close all;
 
 %======ADJUST PARAMETERS HERE======
-fitParams = {'emissivity', 'hConvection', 'c'};
-guess = [0, 12.5, 900];
+fitParams = { 'c' };
+guess = [ 205 ];
 % the program automagically adjusts number of fit variables and stuff
 
 
     
 errorVectorT1 = @(x) (getTemperatureVector(0, endTime,dt,fitParams, x) - T1);
-errorVectorT2 = @(x) (getTemperatureVector(0, endTime,dt,fitParams, x) - T2);
-errorVectorT3 = @(x) (getTemperatureVector(0, endTime,dt,fitParams, x) - T3);
-
-errorLeastSquares = @(x) sum( errorVectorT1(x).^2 + ...
-                                errorVectorT2(x).^2 + ...
-                                errorVectorT3(x).^3);
-            
+errorVectorT2 = @(x) (getTemperatureVector(0.075, endTime,dt,fitParams, x) - T2);
+errorVectorT3 = @(x) (getTemperatureVector(0.15, endTime,dt,fitParams, x) - T3);
+errorVectorT4 = @(x) (getTemperatureVector(0.225, endTime, dt, fitParams, x) - T4);
+errorLeastSquares = @(x) sum(errorVectorT1(x).^2 + errorVectorT3(x).^2 + errorVectorT4(x).^2);
 
 
+initialGuess = getTemperatureVector(0.15, endTime, dt, fitParams, guess);
 
-
-initialGuess = getTemperatureVector(0, endTime, dt, fitParams, guess);
 hold on;
 plot(ElapsedTimeseconds, T1, 'r');
-plot(ElapsedTimeseconds, T2, 'b');
-plot(ElapsedTimeseconds, T3, 'g');
+% plot(ElapsedTimeseconds, T2, 'g');
+plot(ElapsedTimeseconds, T3, 'b');
+plot(ElapsedTimeseconds, T4, 'k');
 title('Initial Guess');
-
+hold off;
 figure;
 
 
@@ -62,8 +60,10 @@ disp(['=========FINISHED: ' datestr(now) '===========']);
 
 hold on;
 plot(ElapsedTimeseconds, T1, 'r');
-plot(ElapsedTimeseconds, T2, 'b');
-plot(ElapsedTimeseconds, T3, 'g');
-title('Fitted Curve');
+% plot(ElapsedTimeseconds, T2, 'g');
+plot(ElapsedTimeseconds, T3, 'b');
+plot(ElapsedTimeseconds, T4, 'k');
 
+title('Fitted Curve');
+hold off;
 

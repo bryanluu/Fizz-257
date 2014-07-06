@@ -65,13 +65,13 @@ calculateTemperatureGradient;
     function setParameters()
         % ===== Setting parameters and stuff
         % K of Aluminum is 205 W/(m*K)
-        parameters.kappa = 205;
+        parameters.kappa = 203.9576;
         
         % Convection constant for Aluminum
-        parameters.hConvection = 12.5;
+        parameters.hConvection = 0;
         
         % For Aluminum, at 25 Celsius, 900 J/kgC
-        parameters.c = 900;
+        parameters.c = 907.31;
         
         % For Aluminum, at 2700 kg/m^3
         parameters.density = 2700;
@@ -87,11 +87,11 @@ calculateTemperatureGradient;
         
         parameters.roomTemp = 20;
         
-        parameters.emissivity = 1.0;
+        parameters.emissivity = 0;
         
-        parameters.power = 5;
+        parameters.power = 10.366;
         
-        timePoints = time/dt;
+        timePoints = round(time/dt);
         
         timeVector = linspace(0, time, timePoints);
         
@@ -100,7 +100,7 @@ calculateTemperatureGradient;
     end
 
     function initialConditions()
-        temperature = ones(timePoints, parameters.segments) *55.0;%* parameters.roomTemp;
+        temperature = ones(timePoints, parameters.segments) * 0; %parameters.roomTemp;
     end
 
     function calculateTemperatureGradient()
@@ -111,7 +111,7 @@ calculateTemperatureGradient;
             rodState = heatingRodTimeStep(lastRodState, ...
                 dt, parameters);
             
-            temperature(t, :)  = rodState;
+            temperature(t, :) = rodState;
         end
         
     end

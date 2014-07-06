@@ -29,7 +29,7 @@ newRodState = lastRodState;
 %% Leftmost Segment
     
 % 5W coming in from left, 5J/s * dt = Joules gained in that time
-heatFromLeft = 0;
+heatFromLeft = parameters.power;
 
 heatFromRight = conductiveHeatIntoFrom(lastRodState(1), lastRodState(2), parameters.kappa, parameters.crossArea, dx);
 
@@ -38,7 +38,7 @@ heatFromRight = conductiveHeatIntoFrom(lastRodState(1), lastRodState(2), paramet
 contactArea = 2*pi*parameters.radius*dx + parameters.crossArea;
 heatLostToConvection = convectiveHeatLostFromTo(lastRodState(1), parameters.roomTemp, parameters.hConvection, contactArea);
 
-heatLostToRadiation = radiationHeatLossFrom(lastRodState(1), contactArea, parameters.emissivity);
+heatLostToRadiation = radiationHeatLossFrom(lastRodState(1), contactArea, parameters.emissivity, parameters.roomTemp);
 
 totalHeat = heatFromLeft + heatFromRight - heatLostToConvection - heatLostToRadiation;
 
@@ -58,9 +58,9 @@ for segment = 2:(segments-1)
     contactArea = 2*pi*parameters.radius*dx;
     heatLostToConvection = convectiveHeatLostFromTo(lastRodState(segment), parameters.roomTemp, parameters.hConvection, contactArea);
     
-    heatLostToRadiation = radiationHeatLossFrom(lastRodState(segment), contactArea, parameters.emissivity);
+    heatLostToRadiation = radiationHeatLossFrom(lastRodState(segment), contactArea, parameters.emissivity, parameters.roomTemp);
 
-    totalHeat = heatFromLeft + heatFromRight - heatLostToConvection - heatLostToRadiation;
+    totalHeat =  heatFromLeft + heatFromRight - heatLostToConvection - heatLostToRadiation;
 
     tempIncrease = totalHeat*dt/(parameters.c*dm);
     
@@ -72,16 +72,16 @@ end
 
 heatFromLeft = conductiveHeatIntoFrom(lastRodState(end), lastRodState(end-1), parameters.kappa, parameters.crossArea, dx);
 
-heatFromRight = 0;
+heatFromRight = conductiveHeatIntoFrom(lastRodState(end), 0, parameters.kappa, parameters.crossArea, dx);
 
 
 % cylindrical surface area + side cross section
 contactArea = 2*pi*parameters.radius*dx + parameters.crossArea;
 heatLostToConvection = convectiveHeatLostFromTo(lastRodState(end), parameters.roomTemp, parameters.hConvection, contactArea);
 
-heatLostToRadiation = radiationHeatLossFrom(lastRodState(end), contactArea, parameters.emissivity);
+heatLostToRadiation = radiationHeatLossFrom(lastRodState(end), contactArea, parameters.emissivity, parameters.roomTemp);
 
-totalHeat = heatFromLeft + heatFromRight - heatLostToConvection - heatLostToRadiation;
+totalHeat =  heatFromLeft + heatFromRight - heatLostToConvection - heatLostToRadiation;
 
 tempIncrease = totalHeat*dt/(parameters.c*dm);
 newRodState(end) = lastRodState(end) + tempIncrease;
@@ -97,7 +97,7 @@ function H = convectiveHeatLostFromTo(temp, roomTemp, convectionConstant, contac
     H = convectionConstant*contactArea*(temp - roomTemp);
 end
 
-function H = radiationHeatLossFrom(temp, contactArea, emissivity)
+function H = radiationHeatLossFrom(temp, contactArea, emissivity, roomTemp)
     stefan_boltzmann = 5.6703E-8;
-    H = contactArea*emissivity*stefan_boltzmann*((temp+273.15)^4-(20+273.15)^4);
+    H = contactArea*emissivity*stefan_boltzmann*((temp+273.15)^4-(roomTemp+273.15)^4);
 end
